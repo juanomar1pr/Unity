@@ -1,0 +1,120 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
+ 
+[RequireComponent(typeof(Rigidbody))]
+ 
+public class jump : MonoBehaviour // Recordar cambiar el nombre de la classe al nombre del archivo.cs
+{
+
+
+
+    
+
+    [SerializeField] private InputActionReference jumpActionReference;
+    [SerializeField] private float jumpForce = 500.0f;
+    public LayerMask groundMask;
+    private XRRig _xrRig;
+    private CapsuleCollider _collider;
+    private Rigidbody _body;
+
+public float obstacleHeightThreshold = 2f;
+    
+
+
+
+
+
+ 
+       // transform.position, Vector3.down, out hit );
+void Start()
+{ 
+
+ 
+ _xrRig = GetComponent<XRRig>();
+        _collider = GetComponent<CapsuleCollider>();
+        _body = GetComponent<Rigidbody>();
+
+      }
+
+  void OnEnable()
+    {
+        // Suscribir la función Jump a la acción OnJump
+        jumpActionReference.action.performed += OnJump;
+    }
+
+    void OnDisable()
+    {
+        // Desuscribir la función Jump de la acción OnJump
+        jumpActionReference.action.performed -= OnJump;
+    }
+
+    void OnJump(InputAction.CallbackContext obj)
+    {
+        // Verificar si el jugador está en el suelo antes de permitir el salto
+        if (IsGrounded())
+        {
+           Jump(); 
+        }
+        else{return;}
+    }
+
+    bool IsGrounded()
+    {
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, Vector3.down, out hit, 2.0f)){
+return true ;
+
+        } else {return false;}
+        
+      
+    }
+
+    void Jump()
+
+     
+{
+
+
+        _body.AddForce(transform.up * jumpForce);
+    } 
+
+      
+   
+ 
+ 
+    // Update is called once per frame
+    void Update()
+    {
+ RaycastHit hit;
+   
+
+
+         
+            
+         
+         // Lanzar un rayo desde la posición del objeto en la dirección hacia abajo (en el eje Y).
+       
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 2.0f))
+        {
+             
+            Debug.DrawLine(transform.position, Vector3.down * 2.0f);
+
+            Debug.Log("Hit object: " + hit.collider.gameObject.name ); // Imprime el nombre del objeto que ha sido golpeado por el rayo.
+
+
+        }
+        else
+        {
+            
+            Debug.Log("No object hit."); // Imprime un mensaje si no se ha golpeado ningún objeto.
+        }
+          //var center = _xrRig.cameraInRigSpacePos;
+        //_collider.center = new Vector3(center.x, _collider.center.y, center.z);
+       // _collider.height = _xrRig.cameraInRigSpaceHeight;
+
+    }}
+   
+
+
+
